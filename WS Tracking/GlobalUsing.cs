@@ -4,6 +4,7 @@ global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;
 global using Serilog;
 global using System.Linq.Expressions;
+global using WS_Tracking;
 global using WS_Tracking.BaseRepository;
 global using WS_Tracking.Entities;
 global using WS_Tracking.Model;

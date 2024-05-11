@@ -48,7 +48,7 @@ public static class RegisterModule
         builder.Services.AddSerilog(lc => lc
             .MinimumLevel.Debug()
             .Enrich.FromLogContext()
-            .WriteTo.File(Path.Join(builder.Environment.ContentRootPath, "myApp.log")));
+            .WriteTo.File(Path.Join(builder.Environment.ContentRootPath, "../Logs/MyLogs.log")));
     }
 
     private static void ConfigurationBackgroundService(IHostApplicationBuilder builder)
