@@ -1,5 +1,6 @@
 ﻿namespace WS_Tracking.Hubs;
 
+[Authorize]
 public class UsersHub : Hub<IUsersHubHelper>
 {
     public override Task OnConnectedAsync()

@@ -1,4 +1,8 @@
-﻿global using Microsoft.AspNetCore.SignalR;
+﻿global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.SignalR;
+global using Microsoft.AspNetCore.WebSockets;
 global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;
@@ -7,6 +11,7 @@ global using System.Linq.Expressions;
 global using WS_Tracking;
 global using WS_Tracking.BaseRepository;
 global using WS_Tracking.Entities;
+global using WS_Tracking.Hubs;
 global using WS_Tracking.Hubs.HubHelper;
 global using WS_Tracking.Model;
 global using WS_Tracking.Repository;

@@ -1,5 +1,4 @@
-﻿
-namespace WS_Tracking;
+﻿namespace WS_Tracking;
 
 public static class RegisterModule
 {
@@ -12,8 +11,16 @@ public static class RegisterModule
         ConfigurationSerilog(builder);
         ConfigurationDI(builder);
         ConfigurationSignalR(builder);
+        ConfigurationJwt(builder);
 
         return services;
+    }
+
+    private static void ConfigurationJwt(IHostApplicationBuilder builder)
+    {
+        var jwtSettings = new JWTSettings();
+        builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jwtSettings);
+        builder.Services.AddSingleton(jwtSettings);
     }
 
     private static void ConfigurationSignalR(IHostApplicationBuilder builder)
