@@ -71,8 +71,9 @@ public static class RegisterModule
         builder.Services.AddTransient<IVehicleGroupRepository, VehicleGroupRepository>();
         builder.Services.AddTransient<IVehiclesModificationsRepository, VehiclesModificationsRepository>();
         builder.Services.AddSingleton<OperationCompanyHelper>();
+        builder.Services.AddSingleton<UserHelper>();
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }
 
     private static void ConfigurationWindowsService(IHostApplicationBuilder builder)
@@ -92,6 +93,7 @@ public static class RegisterModule
     private static void ConfigurationBackgroundService(IHostApplicationBuilder builder)
     {
         builder.Services.AddHostedService<OperationCompanyService>();
+        builder.Services.AddHostedService<UserServices>();
     }
 
     private static void ConfigurationIdentity_DbContext(IHostApplicationBuilder builder)
