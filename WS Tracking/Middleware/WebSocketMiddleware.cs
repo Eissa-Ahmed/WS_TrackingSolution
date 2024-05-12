@@ -10,17 +10,12 @@ public class WebSocketMiddleware
     // Method Invoke
     public async Task Invoke(HttpContext httpContext)
     {
-        var request = httpContext.Request;
-
-        if (request.Path.StartsWithSegments("/hubs", StringComparison.OrdinalIgnoreCase))
+        HttpRequest request = httpContext.Request;
+        if (request.Path.StartsWithSegments("/hub", StringComparison.OrdinalIgnoreCase) &&
+                request.Query.TryGetValue("access_token", out var accessToken))
         {
-            var accessToken = request.Query["access_token"];
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                request.Headers.Authorization = $"Bearer {accessToken}";
-            }
+            request.Headers.Authorization = $"Bearer {accessToken}";
         }
-
         await _requestDelegate(httpContext);
     }
 }

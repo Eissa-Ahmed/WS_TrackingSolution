@@ -1,4 +1,6 @@
-﻿namespace WS_Tracking;
+﻿
+
+namespace WS_Tracking;
 
 public static class RegisterModule
 {
@@ -11,16 +13,37 @@ public static class RegisterModule
         ConfigurationSerilog(builder);
         ConfigurationDI(builder);
         ConfigurationSignalR(builder);
-        ConfigurationJwt(builder);
+        ConfigurationAuthentication(builder);
 
         return services;
     }
 
-    private static void ConfigurationJwt(IHostApplicationBuilder builder)
+    private static void ConfigurationAuthentication(IHostApplicationBuilder builder)
     {
         var jwtSettings = new JWTSettings();
         builder.Configuration.GetSection(nameof(JWTSettings)).Bind(jwtSettings);
         builder.Services.AddSingleton(jwtSettings);
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = false;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                ClockSkew = TimeSpan.FromMinutes(5)
+            };
+        });
     }
 
     private static void ConfigurationSignalR(IHostApplicationBuilder builder)
@@ -31,6 +54,7 @@ public static class RegisterModule
     private static void ConfigurationDI(IHostApplicationBuilder builder)
     {
         builder.Services.AddSingleton(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        builder.Services.AddTransient<IAuthenticationServices, AuthenticationServices>();
         builder.Services.AddTransient<IOperationCompanyRepository, OperationCompanyRepository>();
         builder.Services.AddTransient<IDriverRepository, DriverRepository>();
         builder.Services.AddTransient<IVehicleRepository, VehicleRepository>();
@@ -42,6 +66,8 @@ public static class RegisterModule
         builder.Services.AddTransient<IVehicleGroupRepository, VehicleGroupRepository>();
         builder.Services.AddTransient<IVehiclesModificationsRepository, VehiclesModificationsRepository>();
         builder.Services.AddSingleton<OperationCompanyHelper>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
     }
 
     private static void ConfigurationWindowsService(IHostApplicationBuilder builder)
