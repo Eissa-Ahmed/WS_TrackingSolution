@@ -2,4 +2,5 @@
 
 public interface IUsersHubHelper
 {
+    public Task GetAllUsers(Pagination<ApplicationUser> pagination);
 }

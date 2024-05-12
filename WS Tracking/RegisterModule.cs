@@ -2,7 +2,6 @@
 
 public static class RegisterModule
 {
-
     public static IServiceCollection ApplyServices(this IServiceCollection services, IHostApplicationBuilder builder)
     {
         ConfigurationBackgroundService(builder);
