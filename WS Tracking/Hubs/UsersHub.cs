@@ -1,6 +1,6 @@
 ﻿namespace WS_Tracking.Hubs;
 
-public class OperationCompanyHub : Hub<IOperationCompanyHubHelper>
+public class UsersHub : Hub<IUsersHubHelper>
 {
     public override Task OnConnectedAsync()
     {
@@ -11,5 +11,4 @@ public class OperationCompanyHub : Hub<IOperationCompanyHubHelper>
     {
         return base.OnDisconnectedAsync(exception);
     }
-
 }

@@ -7,6 +7,7 @@ global using System.Linq.Expressions;
 global using WS_Tracking;
 global using WS_Tracking.BaseRepository;
 global using WS_Tracking.Entities;
+global using WS_Tracking.Hubs.HubHelper;
 global using WS_Tracking.Model;
 global using WS_Tracking.Repository;
 global using WS_Tracking.Repository.IRepository;
