@@ -1,6 +1,4 @@
-﻿
-
-namespace WS_Tracking;
+﻿namespace WS_Tracking;
 
 public static class RegisterModule
 {
@@ -8,14 +6,21 @@ public static class RegisterModule
     public static IServiceCollection ApplyServices(this IServiceCollection services, IHostApplicationBuilder builder)
     {
         ConfigurationBackgroundService(builder);
-        ConfigurationDbContext(builder);
+        ConfigurationIdentity_DbContext(builder);
         ConfigurationWindowsService(builder);
         ConfigurationSerilog(builder);
         ConfigurationDI(builder);
         ConfigurationSignalR(builder);
+        ConfigurationHttpContext(builder);
         ConfigurationAuthentication(builder);
 
         return services;
+    }
+
+    private static void ConfigurationHttpContext(IHostApplicationBuilder builder)
+    {
+        builder.Services.AddHttpContextAccessor();
+
     }
 
     private static void ConfigurationAuthentication(IHostApplicationBuilder builder)
@@ -89,12 +94,40 @@ public static class RegisterModule
         builder.Services.AddHostedService<OperationCompanyService>();
     }
 
-    private static void ConfigurationDbContext(IHostApplicationBuilder builder)
+    private static void ConfigurationIdentity_DbContext(IHostApplicationBuilder builder)
     {
         MongoDbSettings mongoDbSettings = new MongoDbSettings();
         builder.Configuration.GetSection(nameof(MongoDbSettings)).Bind(mongoDbSettings);
         builder.Services.AddSingleton(mongoDbSettings);
         ApplicationDbContext dbContext = new ApplicationDbContext(mongoDbSettings);
         builder.Services.AddSingleton(dbContext);
+
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>
+        (
+             connectionString: mongoDbSettings.ConnectionString,
+             databaseName: mongoDbSettings.UserManagementDatabaseName
+        ).AddDefaultTokenProviders();
+
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            // Password settings.
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = true;
+            options.Password.RequiredLength = 6;
+            options.Password.RequiredUniqueChars = 1;
+
+            // Lockout settings.
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings.
+            options.User.AllowedUserNameCharacters =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = true;
+        });
     }
 }
