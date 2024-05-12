@@ -1,6 +1,6 @@
 ﻿namespace WS_Tracking.Hubs;
 
-[Authorize]
+//[Authorize]
 public class UsersHub : Hub<IUsersHubHelper>
 {
     private readonly UserHelper _userHelper;
